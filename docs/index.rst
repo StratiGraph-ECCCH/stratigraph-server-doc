@@ -11,8 +11,8 @@ as it happens; the REST door is for whoever comes in, reads, writes and leaves �
 the trench, a script, a partner's platform.
 
 .. note::
-   This documentation is being written. The REST reference and the guide for client
-   developers arrive with the next release of the server.
+   This documentation is being written. The REST door of a room and the API
+   reference are here; the guide for client developers follows.
 
    StratiGraph Server is developed within the Horizon Europe project *StratiGraph —
    Knowledge Graphs for Stratigraphy* (2025–2029).
@@ -22,3 +22,5 @@ the trench, a script, a partner's platform.
    :caption: Contents
 
    introduction
+   rest-api
+   api-reference
