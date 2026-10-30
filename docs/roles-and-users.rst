@@ -315,6 +315,21 @@ the receiving node without signing in with ORCID there first, for as long as the
 sending node stays on the trust list. People added on the field arrive at the
 centre marked *to verify*.
 
+**Handle with care.** The public part is the mechanism, written on this page;
+what makes it safe is a few things each node keeps to itself:
+
+* a **package file** holds names, ORCID iDs and profiles: it is personal data.
+  Carry it by hand or over a private channel, never in an open chat, and delete
+  it once it has been imported. The same goes for the node's register of people
+  and its log;
+* the node's **private key** (``node-key.pem``, beside the register of people):
+  whoever holds it can sign packages in that node's name. It never leaves the
+  node; if it may have, the other nodes take that node off their trust lists and
+  a new key is made;
+* the **trust list**, the names and addresses of real nodes, and the node's
+  **Keycloak administration credentials** are operational information, kept by
+  whoever looks after the node.
+
 Testing with people who do not exist
 ------------------------------------
 
