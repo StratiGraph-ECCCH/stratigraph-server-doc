@@ -22,6 +22,8 @@ the trench, a script, a partner's platform.
    :caption: Contents
 
    introduction
+   room-guide
+   field-node
    roles-and-users
    rest-api
    api-reference
