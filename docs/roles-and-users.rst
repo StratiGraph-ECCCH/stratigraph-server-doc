@@ -3,9 +3,8 @@ People, profiles and roles
 
 StratiGraph Server · for whoever looks after a node and for anyone who wants to
 know who may do what in a study. The rules on this page are the ones the server
-enforces (``app/access.py``, ``app/operators.py``); the parts that are decided
-but not built yet are marked **Planned**, so the page says what a node does today
-and where it is going.
+enforces (``app/access.py``, ``app/operators.py``, ``app/people.py``), and the
+node console (``/admin``) is where a node manager applies them.
 
 Two questions, asked separately
 -------------------------------
@@ -46,14 +45,17 @@ internet. The node stands as guarantor for that person until the network comes
 back. The first password is temporary and is changed at the first sign-in; when
 it is forgotten, the node manager sets a new temporary one.
 
-.. note::
+In the node console, **People** does all of it in one place: add a person by
+ORCID (the check digit is verified), choose the profile, set or reset the local
+password, take somebody off the node. The server creates the Keycloak account
+itself when it can reach Keycloak as an administrator (``EM_KC_ADMIN_URL`` and
+credentials); otherwise ``dev-stack/accredit.sh`` and
+``dev-stack/offline-password.sh`` still do it from the node. Every act is written
+to the node's log, never with a password in it.
 
-   **Today** a person is accredited by adding the iD to ``accredited.yaml`` and
-   running ``dev-stack/accredit.sh``, which creates the Keycloak user and its
-   password.
-
-   **Planned** — the node console does the same in one place: add a person by
-   ORCID, choose the profile, set or reset the local password, revoke access.
+**The rule for passwords.** A local password is given only to an iD that ORCID
+verified once on this node — the person signed in online with ORCID at least
+once. The node attests only what was verified.
 
 Profiles on the node
 --------------------
@@ -83,13 +85,13 @@ allow-list ``EM_OPERATORS`` — and from nowhere else: there is no endpoint that
 grants it, and nobody can give it to themselves. An empty configuration means
 that nobody is an operator.
 
-.. note::
-
-   **Planned** — the *node editor* profile. Today any person who has signed in
-   may create rooms and groups; from the profile on, only node editors and
-   super-administrators may. The console will also refuse to demote the last
-   super-administrator, so a node is never left without anybody who can look
-   after it.
+Creating rooms and groups needs the node editor profile or super-administrator.
+A node can keep the older behaviour, where anybody signed in creates, with
+``EM_CREATE_POLICY=anyone``. Nobody changes their own profile, and the console
+refuses to demote the last super-administrator, so a node is never left without
+anybody who can look after it. A profile given by the deployment (``EM_OPERATORS``
+or a realm role, ``em-operator`` or ``em-creator``) is shown in the console and
+changed only there.
 
 Roles in a room
 ---------------
@@ -175,12 +177,11 @@ Looking after the node gives the right to archive or delete a room, and to see
 its files from the storage side for maintenance; it gives no right to change the
 graph or the people of a study.
 
-.. note::
-
-   **Planned** — one exception, for a room left without anybody who can manage
-   it (the owner is gone and no administrator remains): the super-administrator
-   may hand the room to a new owner, and that act is written to the node's
-   record. It rescues the room without entering it.
+One exception, for a room left without anybody who can manage it — its owner
+is no longer on the node and no administrator who is remains: the
+super-administrator may hand the room to a new owner (*Lifecycle* in the room's
+panel), and the act is written to the node's log. It rescues the room without
+entering it.
 
 Archiving and deleting a room
 -----------------------------
@@ -255,7 +256,7 @@ At a glance
      -
      -
      - ✓
-     - rescue only (planned)
+     - rescue only
    * - Delete the room
      -
      -
@@ -277,13 +278,28 @@ At a glance
      - ✓
    * - Create rooms and groups
      -
-     - ✓ (planned)
+     - ✓
      - ✓
    * - Add people, choose profiles, set and reset local passwords
      -
      -
-     - ✓ (console planned)
+     - ✓
    * - See every room, the storage, the health of the node
      -
      -
      - ✓
+
+Testing with people who do not exist
+------------------------------------
+
+A development node can hold **test people**: iDs in the range ORCID never
+issues (``0000-0000-…``), marked *test* in the console, given a password
+directly. They exist only where ``EM_ALLOW_TEST_PEOPLE`` is on — the dev stack —
+and never on a real node. The console's *Test people…* creates several at once.
+
+For the real sign-in flow with fictitious researchers, the dev realm points at
+ORCID's sandbox (``sandbox.orcid.org``): register a sandbox client and a few
+sandbox accounts, add their iDs on the node, and they sign in with ORCID exactly
+as real people do. The steps are in ``dev-stack/TEST-PEOPLE.md`` in the server's
+repository.
+
