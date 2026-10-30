@@ -289,6 +289,32 @@ At a glance
      -
      - ✓
 
+People between nodes
+--------------------
+
+A field node often works without a network, so nobody can sign in there with
+ORCID for the first time. People therefore travel from the central node to the
+field node, and back, in a **signed package** made in the node console
+(*Transfers*). Four rules:
+
+* **Passwords never travel.** The receiving node gives each person a new
+  temporary field password; no secret, and no hash of one, leaves a node.
+* **A package is accepted only from a trusted node.** Each node signs its
+  packages with its own key; a node manager puts the other node's public key on
+  the trust list once, comparing the fingerprint, while the field node is
+  prepared with a network. A package changed after signing, or signed by a
+  different key under a trusted name, is refused.
+* **Profiles travel as proposals.** The receiving node's manager confirms them
+  one by one. A new person arrives as a user; a profile raised on the field
+  never becomes valid at the centre by itself.
+* **Only the people who are needed travel**: the owners, members and teams of the
+  rooms chosen for the trip, plus anybody named by hand.
+
+A person the sending node attests ORCID verified can receive a field password on
+the receiving node without signing in with ORCID there first, for as long as the
+sending node stays on the trust list. People added on the field arrive at the
+centre marked *to verify*.
+
 Testing with people who do not exist
 ------------------------------------
 
