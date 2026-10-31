@@ -53,6 +53,33 @@ credentials); otherwise ``dev-stack/accredit.sh`` and
 ``dev-stack/offline-password.sh`` still do it from the node. Every act is written
 to the node's log, never with a password in it.
 
+**Many people at once: the list.** The node manager can also write everybody in
+one file, the node's list of accredited people (``accredited.yaml`` on the
+development node, ``accredited.field.yaml`` on a field node), and restart the
+node. At every start the node adds whoever is missing, gives the profile the
+list names and creates the teams with their members:
+
+.. code-block:: yaml
+
+   accredited:
+     - orcid: 0000-0002-1825-0097
+       name: First Manager
+       profile: super            # manages the node
+     - orcid: 0000-0003-1111-1112
+       name: First Editor
+       profile: editor           # creates rooms and teams
+       groups: [Excavation team, Restoration]
+     - orcid: 0000-0003-2222-2221
+       name: First Archaeologist
+       groups: [Excavation team] # no profile: a user
+
+``profile`` and ``groups`` are optional. A person listed **with** a profile gets
+that profile at every start: the file wins, because that is where the manager
+wrote it. A person listed **without** one keeps the profile given in the console.
+A team is created the first time it is named, with the manager as its owner. The
+list **never removes anybody**: taking a person off the node, or out of a team,
+is done in the console, where it can be seen.
+
 **The rule for passwords.** A local password is given only to an iD that ORCID
 verified once on this node — the person signed in online with ORCID at least
 once. The node attests only what was verified.

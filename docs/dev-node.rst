@@ -112,8 +112,8 @@ and ask the router to always give the computer the same address (usually called
 *DHCP reservation* or *static lease*). Find the address with
 ``ipconfig getifaddr en0`` on a Mac, ``hostname -I`` on Linux.
 
-The quickest way onto the phone is the **QR code** of a room: on the *Work*
-page, beside each room, the *phone* button shows it. Frame it with the phone's
+The quickest way onto the phone is the **QR code** of a room: in *Your rooms*,
+the *On the phone* button of each room shows it. Frame it with the phone's
 camera and StratiField opens in that room.
 
 On the Mac itself, keep using ``em.localhost`` in EMStudio. Recent versions of
@@ -125,8 +125,10 @@ need it.
 Cleaning up rooms
 -----------------
 
-Rooms are managed in the **console of the node**, ``https://<host>:8443/em/admin/``,
-section *Rooms*, by whoever is an operator of the node.
+The node's address opens its door and, after signing in, its house. For an
+operator the house has, under *Your rooms* and *Tools*, the sections of the node:
+*Rooms*, *People*, *Groups*, *Permissions*, *Transfers*, *Memory and bucket*,
+*Node health*. Rooms are cleaned up in *Rooms*.
 
 * The chips on top filter the list: *Active*, *Archived*, *Implicit*.
   Implicit rooms are those nobody declared — usually the automatic tests

@@ -44,70 +44,64 @@ says which role was needed.
 Signing in
 ----------
 
-Open the node's front door in a browser — the address your node manager gives
-you, ending in ``/em/rooms/`` — and choose *Sign in*.
+Open the node's address in a browser — the one your node manager gives you, for
+example ``https://192.168.1.214:8443`` — and you are at the **door** of the node:
+one sentence on what is done here and one button.
 
 * **With a network**: *Sign in with ORCID*, with your usual ORCID account.
-* **On the excavation, without a network**: user name = your ORCID iD (for
-  example ``0000-0002-1825-0097``), password = the field password the node
-  manager gave you. The first time, the node asks you to choose your own.
+* **On the excavation, without a network**: *sign in with the node's password*.
+  User name = your ORCID iD (for example ``0000-0002-1825-0097``), password = the
+  field password the node manager gave you. The first time, the node asks you to
+  choose your own.
+
+Below the button, without signing in, are the published studies, the tools to
+install and this guide.
 
 If you have forgotten the field password, ask the node manager for a new one:
 nobody can read the old one, not even them.
 
-Finding your rooms
-------------------
+Your rooms
+----------
 
-The front door has a *Work* entry (``/em/work/``): it lists the rooms where you
-have a role, and only those. Choose *enter* (or *Share*) beside a room to
-open its page.
+After signing in you are in the node's **house**, on **Your rooms**: the rooms
+where you hold a role, and no other. Each one has its doors:
 
-To act on **many rooms at once** — archive them, restore them, delete them —
-use the console of the node (``/em/admin/``, section *Rooms*): tick the rooms
-and choose what to do with all of them. See :doc:`dev-node`.
-
-**Creating a room** is a box at the top of the list. It is there if your
-profile on the node allows it (*node editor*); otherwise the page says whom to
-ask. Whoever creates a room is its **owner**.
-
-The room's page
----------------
-
-The page opens on **The room**, the team's board. It reads, top to bottom:
-
-* **Who is here** — who is in the room now, who is writing and who is reading,
-  and who left.
-* **Waiting for you** — fields that a tool or an assistant composed and that
-  wait for a person's signature. Nothing written by a machine counts as
-  validated until somebody signs it.
-* **Since you last looked** — what changed, counted unit by unit. Choose the
-  window: since you last wrote, the last hour, day or week.
-* **What we said to each other** — the room's conversation. It stays in the
-  room: it does not travel with the published study.
-* **Who dug what** — who wrote, how much and with which tool. Every name is
-  the identity that signed in, stamped by the node.
-* **The numbers, and their holes** — units, relations, and what is still
-  missing: units without an epoch, without any relation, without anybody's
-  name on them. A good list to read before closing a day's work.
-
-Opening the room in a tool
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Beside each room there are its **doors**:
-
-* *desktop* opens the room in a program installed on your computer (EMStudio);
-* *browser* opens it in a new tab, where the node offers one;
-* *copy for EMtools* copies a link: in Blender, EMtools → *Open room from
-  link…*, and paste;
-* *em.json* gives you the study's file, to keep or to import by hand.
+* **EMStudio** opens the room in the program installed on your computer. If
+  nothing opens within two seconds, the page offers to install EMStudio;
+* **In the browser** opens EMStudio in a new tab, with nothing to install;
+* **On the phone** shows a QR code: frame it with the phone's camera and
+  StratiField opens in that room;
+* **EMtools** copies the room's link for Blender: in Blender, EMtools → *Open
+  room from link…*, and paste. Beside it, the way to install Blender and EMtools
+  the first time.
 
 A link never carries your password or your session: whoever receives it still
 signs in with their own identity, and enters only with their own role.
 
+Archived rooms are gathered at the bottom. **New room** is at the top if your
+profile on the node allows it (*node editor*); otherwise the page says whom to
+ask. Whoever creates a room is its **owner**.
+
+**Tools**, in the column on the left, explains step by step how to install
+EMStudio, and Blender (4.4 or later) with EMtools.
+
+One room, opened
+----------------
+
+Click a room's name, or *People and sharing*, and the room opens on the right:
+
+* **People and roles** — who works in it, with which role;
+* **Invitations** — the links that bring somebody in;
+* **Who sees the study** — restricted or public, and the embargo;
+* **Lifecycle** — archive, hand over, delete (for whoever governs the room).
+
+A reader or an editor sees the first three as they are, with a sentence saying
+who can change them.
+
 Sharing a room — for administrators and owners
 ----------------------------------------------
 
-The **Share** section of the room's page is where the people of the room are
+The room's panel (*People and sharing*) is where the people of the room are
 decided. An editor or a reader sees it with a sentence explaining that this
 part belongs to the administrators; *Who sees the study* stays visible to
 everyone, read-only.
@@ -115,9 +109,9 @@ everyone, read-only.
 Adding a person
 ~~~~~~~~~~~~~~~
 
-In *Who is here*, type the person's **ORCID iD**, choose the role, *Add*. The
-person sees the room the next time they open the list. To take somebody out,
-*remove* beside their name.
+In *People and roles*, type the person's **ORCID iD**, choose the role, *Add*.
+The person sees the room the next time they open the house. To change a role or
+take somebody out, use the menu beside their name.
 
 Give **editor** to whoever writes in the graph, **reader** to whoever needs to
 follow the work without changing it — a specialist consulting the data, a
@@ -128,20 +122,23 @@ Adding a team
 ~~~~~~~~~~~~~
 
 A **team** is a named list of people, made by the node manager or by a node
-editor. *Add team* gives the whole team a role at once; whoever joins the team
+editor, or written in the node's list (see :doc:`roles-and-users`). Type the
+team's id where you would type an ORCID, and the whole team gets the role at
+once; whoever joins the team
 later gets it too. When a person has a role of their own and one through a
 team, the higher one counts.
 
 Inviting with a link
 ~~~~~~~~~~~~~~~~~~~~
 
-*Invite by link*: choose the role (editor or reader) and *Make a link*. Copy it
-at once — the node keeps only a checksum and cannot show it again. Whoever opens
-it signs in with their own ORCID and receives the role the link offers.
+In *Invitations*, choose the role (editor or reader) and how long the link
+lasts, then *Create link*. It is copied for you and shown once — the node keeps
+only a checksum and cannot show it again. Whoever opens it arrives at the node's
+door, signs in with their own ORCID and finds the room in their house, with the
+role the link offers.
 
 Send invitation links in a private message, never in a public chat or on a
-slide, and **revoke** a link once the people it was for have come in. A link
-made here has no expiry until you revoke it.
+slide, and **revoke** a link once the people it was for have come in.
 
 Who sees the study
 ~~~~~~~~~~~~~~~~~~
@@ -162,7 +159,7 @@ Choose, set the date if there is one, *Save*.
 The owner
 ~~~~~~~~~
 
-*The live copy* shows who owns the room. The owner can **transfer** the room to
+The owner can **hand the room over** (*Lifecycle*) to
 another ORCID iD — for instance when the direction of an excavation changes
 hands. The previous owner stays as an administrator. Transferring hands over
 the job of managing the room; it does not change who signed what in the graph.
