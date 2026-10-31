@@ -40,11 +40,10 @@ The node holds you to the safe defaults of its kind and tells you, in the
 console's *Node health* panel, what is still missing.
 
 .. note::
-   The field node is installed today with the scripts of the development stack
-   (the ``dev-stack`` folder of the server's repository). They are the scripts
-   used on the pilots, and they work offline. Because they come from development,
-   a few values must be changed **before the first start**: the steps below say
-   which, and why.
+   The field node is installed with the scripts in the ``dev-stack`` folder of
+   the server's repository, the same used on the pilots, and it works offline.
+   One command, ``fcn-field-setup.sh``, turns them into a field node: the
+   node's own secrets, no demonstration accounts, you as its manager.
 
 What you need
 -------------
@@ -87,10 +86,8 @@ Choose a folder for the node (here: ``~/stratigraph``) and download the server:
    mkdir -p ~/stratigraph && cd ~/stratigraph
    git clone https://github.com/StratiGraph-ECCCH/stratigraph-server.git
    cd stratigraph-server/dev-stack
-   cp .env.dev.example .env.dev
 
-``.env.dev`` is the node's configuration file. It stays on this computer and is
-never shared.
+Every command from here on is typed in this ``dev-stack`` folder.
 
 Step 3 · Choose the node's name
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -105,34 +102,36 @@ The simplest is the computer's own local name:
 
 In the rest of this page that name is written ``NAME``.
 
-Step 4 · The configuration, before the first start
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Step 4 · Make it a field node
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Open ``.env.dev`` with a text editor (on a Mac: ``open -e .env.dev``) and add
-these lines at the end, with your values:
+One command, with your ORCID iD, your name, a name for the node that the other
+nodes will read, and ``NAME``:
 
 .. code-block:: bash
 
-   # what this node is
-   EM_NODE_KIND=field
-   EM_NODE_NAME=scavo-2027.example        # a name the other nodes will read
-   # who looks after it: your ORCID iD (more than one: separated by commas)
-   DEV_OPERATOR_ORCID=0000-0000-0000-0000
-   # no fictitious people on a node that holds real work
-   EM_ALLOW_TEST_PEOPLE=0
-   # ORCID, the real one (see step 5 for the two values)
-   ORCID_ISSUER=https://orcid.org
-   ORCID_CLIENT_ID=APP-…
-   ORCID_CLIENT_SECRET=…
+   ./fcn-field-setup.sh --orcid 0000-0000-0000-0000 --name "Your Name" \
+       --node-name scavo-2027 --host NAME
 
-Then **change the development secrets** already in the file, each to a long
-value of your choice (a password manager can generate them):
+It writes the node's configuration file, ``.env.dev``, and:
 
-* ``KEYCLOAK_ADMIN_PASSWORD`` — the administrator of the node's sign-in service;
-* ``RUSTFS_ACCESS_KEY`` and ``RUSTFS_SECRET_KEY`` — the keys of the file store.
+* generates the node's **own secrets** (the administrator of the sign-in
+  service, the keys of the file store, the server's key), long and random. It
+  never prints them;
+* declares the node a **field node**, with fictitious test people switched off;
+* makes **you** its manager, by your ORCID iD;
+* prepares the sign-in service **without demonstration accounts**: the only
+  person the node knows at the start is you.
 
-Change them now, before the first start: the sign-in service fixes its
-administrator when it is created, and a value changed later is not read again.
+``.env.dev`` stays on this computer, readable only by you. Keep a copy of it in a
+safe place (an encrypted USB stick, your institution's password manager):
+without it the node cannot be rebuilt.
+
+Running the command again is harmless: secrets already set are kept, and a
+second ``--orcid`` adds a second manager to the list.
+
+At the end it prints the two things still to do: register the node with ORCID
+(step 5) and start it (step 6).
 
 Step 5 · Register the node with ORCID
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -142,17 +141,18 @@ field password: a node attests only the identities ORCID verified.
 
 1. Sign in at https://orcid.org, open *Developer tools*, and register a public
    API client.
-2. As redirect URI, write::
+2. As redirect URI, write the line ``fcn-field-setup.sh`` printed::
 
       https://NAME:8443/auth/realms/em-dev/broker/orcid/endpoint
 
-3. Copy the *client ID* and the *client secret* into ``ORCID_CLIENT_ID`` and
-   ``ORCID_CLIENT_SECRET`` in ``.env.dev``.
+3. Open ``.env.dev`` with a text editor (on a Mac: ``open -e .env.dev``) and add
+   at the end the *client ID* and the *client secret* ORCID gives you::
+
+      ORCID_CLIENT_ID=APP-…
+      ORCID_CLIENT_SECRET=…
 
 Step 6 · Prepare and start
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-From the ``dev-stack`` folder:
 
 .. code-block:: bash
 
@@ -161,9 +161,9 @@ From the ``dev-stack`` folder:
 
 ``fcn-install.sh`` checks the machine, downloads the companion repositories it
 needs, and tells you in plain words anything that is missing — it never installs
-system software by itself. ``fcn-up.sh`` starts everything. The first start
-takes several minutes (the images are built); after that a start takes about
-fifteen seconds.
+system software by itself. ``fcn-up.sh`` starts everything, and on a field node
+it also creates your account. The first start takes several minutes (the images
+are built); after that a start takes about fifteen seconds.
 
 Step 7 · Trust the node's certificate on this computer
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -181,26 +181,10 @@ door — in the browser.
 Step 8 · Become the node's manager
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The node lets in, through ORCID, only the iDs it already knows. The first one,
-yours, is written by hand; everybody else arrives from the console.
-
-1. In the ``dev-stack`` folder, open ``accredited.yaml`` and replace the
-   demonstration entries with yours::
-
-      accredited:
-        - orcid: 0000-0000-0000-0000
-          name: Your Name
-
-   Then create your account on the node:
-
-   .. code-block:: bash
-
-      ./accredit.sh
-
-2. Open the console, https://NAME:8443/em/admin/ , and choose *Sign in with
-   ORCID*. ORCID links your account the first time. Your iD is the one in
-   ``DEV_OPERATOR_ORCID``, so you enter as **super-administrator**.
-3. Give yourself the **field password** you will use on the excavation, where
+1. Open the console, https://NAME:8443/em/admin/ , and choose *Sign in with
+   ORCID*. ORCID links your account the first time, and you enter as
+   **super-administrator**.
+2. Give yourself the **field password** you will use on the excavation, where
    ORCID cannot be reached:
 
    .. code-block:: bash
@@ -209,24 +193,12 @@ yours, is written by hand; everybody else arrives from the console.
 
    It asks for the password twice and shows nothing on screen. At your first
    field sign-in the node asks you to choose your own.
-4. In *Node health*, the card *What kind of node* says **field node** and lists
+3. In *Node health*, the card *What kind of node* says **field node** and lists
    what is still missing. At this point it normally says that the node trusts no
-   node yet: that is step 10.
+   node yet: that is the next step.
 
-Step 9 · Switch off the demonstration accounts
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The development sign-in service carries a few demonstration accounts (``dev``,
-``viewer``, ``editor``, ``editor2``, ``outsider``) with known passwords. On a node
-that holds real work they are switched off:
-
-1. Open https://NAME:8443/auth/admin/ and sign in as ``admin`` with the
-   ``KEYCLOAK_ADMIN_PASSWORD`` you chose.
-2. Top left, choose the realm **em-dev**, then *Users*.
-3. Open each of the five accounts and turn **Enabled** off. Save.
-
-Step 10 · Exchange keys with the institutional node
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Step 9 · Exchange keys with the institutional node
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The two nodes must trust each other once, so that the team's package can be
 accepted. It is done by the two managers, on the phone or face to face.
@@ -241,7 +213,7 @@ accepted. It is done by the two managers, on the phone or face to face.
    set. If they do not, remove the entry and start again: somebody pasted the
    wrong key.
 
-Step 11 · Bring the team in
+Step 10 · Bring the team in
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 1. On the **institutional** node, its manager opens *Transfers → Prepare a
@@ -258,7 +230,7 @@ Step 11 · Bring the team in
 Passwords never travel in a package: every person receives one from the node
 they are working on.
 
-Step 12 · Prepare the phones and tablets
+Step 11 · Prepare the phones and tablets
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The camera, the microphone and the GPS work in the browser only on a connection
