@@ -40,145 +40,130 @@ The node holds you to the safe defaults of its kind and tells you, in the
 console's *Node health* panel, what is still missing.
 
 .. note::
-   The field node is installed with the scripts in the ``dev-stack`` folder of
-   the server's repository, the same used on the pilots, and it works offline.
-   One command, ``fcn-field-setup.sh``, turns them into a field node: the
-   node's own secrets, no demonstration accounts, you as its manager.
+   Four commands install a field node: one downloads and installs, one sets it
+   up with your ORCID, one starts it the first time, one makes the computer
+   trust it. After that the node switches itself on with the computer.
 
 What you need
 -------------
 
-* **A computer** that stays on during the working day: a Mac (Apple silicon or
-  Intel) or a Linux machine, with at least 16 GB of memory and 100 GB of free
-  disk. The studies, their files and the photographs live on this disk.
-* **A network on the site** that the phones and tablets can join: a small
-  travel router is the reliable choice. Phone hotspots often keep the devices
-  from seeing each other.
-* **Your ORCID iD**, and an internet connection for the preparation, which is
-  done at base, days before leaving.
-* **A contact at the institutional node**, the person who looks after it, to
-  exchange keys and the team's package.
+**The node computer**, one of:
+
+* a **Raspberry Pi 5 with 8 GB** of memory, its official 27 W power supply, and
+  an SSD (NVMe or USB) rather than the memory card for the data. Add the
+  **RTC battery** (the small official battery that plugs into the board, a few
+  euros): it keeps the clock running while the Pi is off, and the node needs
+  the right time — see *The clock* below;
+* or a Mac or a Linux laptop with at least 8 GB of memory and 100 GB of free
+  disk.
+
+**A network on the site**: a small travel router (access point). The node is
+connected to it **by cable**; phones and tablets join its Wi-Fi. The router does
+not need the internet. In its settings, once, at base:
+
+* leave DHCP on (it gives addresses to the devices);
+* switch off *client isolation* (sometimes called *AP isolation*): with it on,
+  the phones cannot see the node;
+* give the node a **fixed address** (DHCP reservation) and, if the router
+  offers it, a local name equal to the node's name (``fcn.local``, say) — it
+  helps phones that do not resolve ``.local`` names by themselves.
+
+The node needs no Wi-Fi password: it is on the cable. The Wi-Fi password is the
+router's, and the team receives it like any Wi-Fi password.
+
+**At base, once**: an internet connection, your ORCID iD, and a contact at the
+institutional node, the person who looks after it.
 
 Part 1 · Installing, at base
 ----------------------------
 
-Step 1 · The tools
-~~~~~~~~~~~~~~~~~~
+The whole installation is four commands, typed in a terminal on the node
+computer (on a Pi without a screen: from another computer, ``ssh`` to it).
 
-On a **Mac**, install Homebrew from https://brew.sh if it is not there yet, then
-in the Terminal:
-
-.. code-block:: bash
-
-   brew install git colima docker docker-compose
-
-On **Linux**, install Docker Engine and its compose plugin with your
-distribution's instructions (https://docs.docker.com/engine/install/), and
-``git``.
-
-Step 2 · The server
-~~~~~~~~~~~~~~~~~~~
-
-Choose a folder for the node (here: ``~/stratigraph``) and download the server:
-
-.. code-block:: bash
-
-   mkdir -p ~/stratigraph && cd ~/stratigraph
-   git clone https://github.com/StratiGraph-ECCCH/stratigraph-server.git
-   cd stratigraph-server/dev-stack
-
-Every command from here on is typed in this ``dev-stack`` folder.
-
-Step 3 · Choose the node's name
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The phones will reach the node by a **name**, never by a bare number address.
-The simplest is the computer's own local name:
-
-* on a Mac: *System Settings → General → Sharing*, at the bottom, *Local
-  hostname* — something like ``scavo-mac.local``;
-* on Linux: the output of ``hostname``, followed by ``.local`` (the machine needs
-  ``avahi-daemon``, present on most desktop distributions).
-
-In the rest of this page that name is written ``NAME``.
-
-Step 4 · Make it a field node
+Step 1 · Download and install
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-One command, with your ORCID iD, your name, a name for the node that the other
-nodes will read, and ``NAME``:
+On a **Mac**, install Homebrew first (https://brew.sh). On a **Raspberry Pi** or
+another Debian/Ubuntu Linux nothing is needed beforehand. Then:
 
 .. code-block:: bash
 
-   ./fcn-field-setup.sh --orcid 0000-0000-0000-0000 --name "Your Name" \
-       --node-name scavo-2027 --host NAME
+   curl -fsSL https://raw.githubusercontent.com/StratiGraph-ECCCH/stratigraph-server/main/dev-stack/fcn-get.sh | bash
 
-It writes the node's configuration file, ``.env.dev``, and:
+It downloads the server into ``~/stratigraph``, installs what the computer lacks
+(Docker and the rest; it asks for your computer password once), downloads the
+companion programs, and checks everything. It says, in plain words, anything it
+could not do.
 
-* generates the node's **own secrets** (the administrator of the sign-in
-  service, the keys of the file store, the server's key), long and random. It
-  never prints them;
-* declares the node a **field node**, with fictitious test people switched off;
-* makes **you** its manager, by your ORCID iD;
-* prepares the sign-in service **without demonstration accounts**: the only
-  person the node knows at the start is you.
+Running the same command again later, at base, **updates** the node.
 
-``.env.dev`` stays on this computer, readable only by you. Keep a copy of it in a
-safe place (an encrypted USB stick, your institution's password manager):
-without it the node cannot be rebuilt.
+Every command from here on is typed in the ``dev-stack`` folder:
 
-Running the command again is harmless: secrets already set are kept, and a
-second ``--orcid`` adds a second manager to the list.
+.. code-block:: bash
 
-At the end it prints the two things still to do: register the node with ORCID
-(step 5) and start it (step 6).
+   cd ~/stratigraph/stratigraph-server/dev-stack
 
-Step 5 · Register the node with ORCID
+Step 2 · Register the node with ORCID
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The node must sign you in with ORCID once, at base, before it can give anybody a
 field password: a node attests only the identities ORCID verified.
 
-1. Sign in at https://orcid.org, open *Developer tools*, and register a public
-   API client.
-2. As redirect URI, write the line ``fcn-field-setup.sh`` printed::
+Sign in at https://orcid.org, open *Developer tools*, and register a public API
+client with this redirect URI, where ``NAME`` is the node's network name — the
+computer's name followed by ``.local`` (``fcn.local`` for a Pi called ``fcn``)::
 
-      https://NAME:8443/auth/realms/em-dev/broker/orcid/endpoint
+   https://NAME:8443/auth/realms/em-dev/broker/orcid/endpoint
 
-3. Open ``.env.dev`` with a text editor (on a Mac: ``open -e .env.dev``) and add
-   at the end the *client ID* and the *client secret* ORCID gives you::
+Keep the *client ID* and the *client secret* at hand for the next step.
 
-      ORCID_CLIENT_ID=APP-…
-      ORCID_CLIENT_SECRET=…
-
-Step 6 · Prepare and start
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+Step 3 · Set the node up, once
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: bash
 
-   ./fcn-install.sh NAME
-   ./fcn-up.sh NAME
+   ./fcn-field-setup.sh
 
-``fcn-install.sh`` checks the machine, downloads the companion repositories it
-needs, and tells you in plain words anything that is missing — it never installs
-system software by itself. ``fcn-up.sh`` starts everything, and on a field node
-it also creates your account. The first start takes several minutes (the images
-are built); after that a start takes about fifteen seconds.
+It asks, one at a time: your ORCID iD, your name, a name for the node that the
+other nodes will read (``scavo-2027``), its network name (it proposes the
+computer's), the ORCID client ID and secret (the secret does not show while you
+type), and whether the node must **switch itself on** every time the computer
+is switched on — answer yes.
 
-Step 7 · Trust the node's certificate on this computer
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Then it:
 
-The node makes its own certificate, and every device must trust it once:
+* generates the node's **own secrets**, long and random, and never prints them;
+* declares the node a **field node**, with fictitious test people switched off;
+* makes **you** its manager, by your ORCID iD;
+* prepares the sign-in service **without demonstration accounts**.
+
+Everything is written in ``.env.dev``, readable only by you. Keep a copy of it
+in a safe place (an encrypted USB stick, your institution's password manager):
+without it the node cannot be rebuilt. Running the command again asks only what
+is still missing — the ORCID client, for instance, if you skipped it.
+
+Step 4 · Start it, the first time
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: bash
+
+   ./fcn-up.sh
+
+The first start builds the programs: on a Raspberry Pi it takes a long while
+(tens of minutes), on a laptop a few minutes. It needs the internet this once. From
+then on the node starts by itself at every power-on, in a few minutes, with or
+without a network.
+
+Then make this computer trust the node's certificate (it asks for your computer
+password):
 
 .. code-block:: bash
 
    ./fcn-trust-ca.sh
 
-It asks for your computer password, because it writes into the system's list of
-trusted certificates. Then open https://NAME:8443/em/rooms/ — the node's front
-door — in the browser.
+and open https://NAME:8443/em/rooms/ — the node's front door — in the browser.
 
-Step 8 · Become the node's manager
+Step 5 · Become the node's manager
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 1. Open the console, https://NAME:8443/em/admin/ , and choose *Sign in with
@@ -191,13 +176,13 @@ Step 8 · Become the node's manager
 
       ./offline-password.sh 0000-0000-0000-0000
 
-   It asks for the password twice and shows nothing on screen. At your first
-   field sign-in the node asks you to choose your own.
+   (your iD). It asks for the password twice and shows nothing on screen. At
+   your first field sign-in the node asks you to choose your own.
 3. In *Node health*, the card *What kind of node* says **field node** and lists
    what is still missing. At this point it normally says that the node trusts no
    node yet: that is the next step.
 
-Step 9 · Exchange keys with the institutional node
+Step 6 · Exchange keys with the institutional node
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The two nodes must trust each other once, so that the team's package can be
@@ -213,8 +198,8 @@ accepted. It is done by the two managers, on the phone or face to face.
    set. If they do not, remove the entry and start again: somebody pasted the
    wrong key.
 
-Step 10 · Bring the team in
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Step 7 · Bring the team in
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 1. On the **institutional** node, its manager opens *Transfers → Prepare a
    package*, ticks the rooms that go to the field (and adds any other ORCID iD),
@@ -230,8 +215,8 @@ Step 10 · Bring the team in
 Passwords never travel in a package: every person receives one from the node
 they are working on.
 
-Step 11 · Prepare the phones and tablets
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Step 8 · Prepare the phones and tablets
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The camera, the microphone and the GPS work in the browser only on a connection
 the device trusts. Every phone and tablet that will record must trust the node's
@@ -256,22 +241,39 @@ Part 2 · On the excavation
 Each morning
 ~~~~~~~~~~~~
 
-1. Switch on the router, then the node computer.
-2. From the ``dev-stack`` folder: ``./fcn-up.sh NAME``. Everything you left the
-   evening before is there: studies, rooms and files persist between starts.
-3. Open https://NAME:8443/em/rooms/ on one device to check that the node answers.
+1. Switch on the router, then the node computer. The node starts by itself:
+   after a few minutes it answers.
+2. Open https://NAME:8443/em/rooms/ on one device to check that it does.
+   Everything you left the evening before is there: studies, rooms, files, and
+   the people with their field passwords.
+
+If it does not answer after five minutes, the record of the last start
+is in ``dev-stack/fcn-boot.log``; ``./fcn-up.sh --offline`` starts it by hand.
 
 Each evening
 ~~~~~~~~~~~~
 
-From the ``dev-stack`` folder: ``./fcn-down.sh``. It stops the services and keeps
-every datum. Then copy the node's data to an external disk if your institution's
+Switch the computer off the normal way (on a Pi: ``sudo poweroff``, or the
+button on the Pi 5). The node stops with it, gently, and keeps every datum.
+Pulling the plug of a running Pi is what to avoid: the last minutes of work can
+be lost. Copy the node's data to an external disk if your institution's
 procedure asks for it.
 
 .. warning::
    ``./fcn-down.sh --wipe`` **erases** the node's data: studies, rooms, files,
    accounts and the certificate. It exists for tests. It is never used on a
    node that holds a campaign.
+
+The clock
+~~~~~~~~~
+
+The node and the phones must agree on the time: the node's certificate and
+every sign-in carry a date, and a phone refuses a certificate that, by its own
+clock, has expired. With the internet a computer sets its clock by itself; on
+the excavation it cannot. A Mac or a laptop keeps time while off. A Raspberry
+Pi keeps it **only with the RTC battery**: without it, every morning the Pi
+starts from the time it was switched off, many hours behind, and the phones
+refuse the node. With the battery in place, nothing to do.
 
 When somebody forgets the password
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -315,9 +317,11 @@ Part 3 · Coming back
 Checklist before leaving
 ------------------------
 
-* ``EM_NODE_KIND=field`` and ``EM_ALLOW_TEST_PEOPLE=0`` in ``.env.dev``.
-* Development secrets changed before the first start.
-* Demonstration accounts switched off.
+* ``fcn-field-setup.sh`` run before the first start, with your ORCID iD and
+  the ORCID client; automatic start on.
+* Switch the node off and on once at base: it comes back by itself.
+* On a Raspberry Pi, the RTC battery in place.
+* The router: client isolation off, the node on the cable with a fixed address.
 * *Node health*: the card says **field node** and lists nothing in red.
 * The institutional node is in *Trusted nodes*, fingerprints compared.
 * The team's package received; every person has a field password, yours too.
