@@ -23,6 +23,7 @@ the trench, a script, a partner's platform.
 
    introduction
    room-guide
+   dev-node
    field-node
    roles-and-users
    rest-api

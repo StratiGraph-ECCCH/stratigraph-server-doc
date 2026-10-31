@@ -59,7 +59,12 @@ Finding your rooms
 ------------------
 
 The front door has a *Work* entry (``/em/work/``): it lists the rooms where you
-have a role, and only those. Choose *enter* to open a room's page.
+have a role, and only those. Choose *enter* (or *Share*) beside a room to
+open its page.
+
+To act on **many rooms at once** — archive them, restore them, delete them —
+use the console of the node (``/em/admin/``, section *Rooms*): tick the rooms
+and choose what to do with all of them. See :doc:`dev-node`.
 
 **Creating a room** is a box at the top of the list. It is there if your
 profile on the node allows it (*node editor*); otherwise the page says whom to
