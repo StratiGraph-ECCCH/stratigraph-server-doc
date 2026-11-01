@@ -149,10 +149,13 @@ Step 4 · Start it, the first time
 
    ./fcn-up.sh
 
-The first start builds the programs: on a Raspberry Pi it takes a long while
-(tens of minutes), on a laptop a few minutes. It needs the internet this once. From
-then on the node starts by itself at every power-on, in a few minutes, with or
-without a network.
+The first start downloads the programs ready-made (the images published on
+GHCR, for Intel and ARM alike — see :doc:`dev-node`, *From the code, or from
+the published images*): nothing is built on the node, and only
+``stratigraph-server`` is cloned on it. It needs the internet this once —
+``./fcn-install.sh`` has usually downloaded them already. From then on the node
+starts by itself at every power-on, in a few minutes, with or without a
+network.
 
 Then make this computer trust the node's certificate (it asks for your computer
 password):

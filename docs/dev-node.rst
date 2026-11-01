@@ -92,6 +92,44 @@ Every script explains itself, with examples::
    again. The field node keeps the sessions on disk and does not have this
    problem.
 
+From the code, or from the published images
+-------------------------------------------
+
+The node can be started by two roads, and both are kept:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 40 40
+
+   * -
+     - **source** — for whoever writes the code
+     - **images** — for a node that only has to run
+   * - Where the services come from
+     - Built on this computer from the repositories side by side
+       (``stratigraph-chatbot``, ``stratigraph-catalog``, ``EMStudio``…); a
+       change to the code shows without rebuilding.
+     - Downloaded ready-made from ``ghcr.io/stratigraph-eccch``, for Intel and
+       ARM machines alike (a Raspberry Pi 5 included). Nothing is built, and
+       only ``stratigraph-server`` needs to be on the computer.
+   * - Forms (schede), EMStudio reader, s3Dgraphy
+     - From the checkouts beside it.
+     - Inside the images.
+   * - Docker Compose
+     - Any version 2.
+     - 2.24.4 or newer: the scripts check it and say so.
+
+The field node goes by images; every other node by source. To choose by hand,
+add ``--images`` or ``--source`` to ``./fcn-install.sh`` and ``./fcn-up.sh``,
+or write ``EM_NODE_ROAD=images`` (or ``source``) in ``dev-stack/.env.dev``.
+
+On the images road, ``./fcn-install.sh`` downloads the images as its last step
+— do it at home, with the network — and ``./fcn-up.sh`` downloads them again
+(only what changed) before switching on; ``./fcn-up.sh --offline`` starts with
+what the computer already has. If the download fails the script says the likely
+reason: no network, a version not yet published, or an image not made for this
+kind of processor. The versions are written in one place,
+``dev-stack/docker-compose.images.yml``.
+
 Reaching it from the phone
 --------------------------
 
