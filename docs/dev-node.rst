@@ -166,18 +166,27 @@ Cleaning up rooms
 The node's address opens its door and, after signing in, its house. For an
 operator the house has, under *Your rooms* and *Tools*, the sections of the node:
 *Rooms*, *People*, *Groups*, *Permissions*, *Transfers*, *Memory and bucket*,
-*Node health*. Rooms are cleaned up in *Rooms*.
+*Trash*, *Node health*. Rooms are cleaned up in *Rooms*.
 
 * The chips on top filter the list: *Active*, *Archived*, *Implicit*.
   Implicit rooms are those nobody declared — usually the automatic tests
   made them. A banner offers to delete them all at once.
 * Tick the rooms on the left (the box in the header ticks all the listed
   ones). A bar appears with what can be done to all of them together:
-  *Archive*, *Restore*, *Delete…*. The choice survives a change of filter.
-* Deleting asks you to type a word to confirm, and cannot be undone: each room
-  goes with its em.json, its revisions, its members and its invitations. Its
-  files stay in the bucket until the operator removes the orphans
-  (*Memory and bucket*).
+  *Archive*, *Restore*, *Into the trash…*. The choice survives a change of
+  filter.
+* Removing puts the rooms in the **trash** for 30 days. A room in the trash no
+  longer opens and leaves every list, but nothing of it is touched: its owner
+  or the operator takes it back, as it was, from *Trash*. After 30 days the
+  node deletes it with its em.json, its revisions, its members and its
+  invitations; its files stay in the bucket and become orphans if no other
+  room cites them. *Delete now…* in *Trash* does the same at once, after you
+  type the room's name.
+* Orphan files go through the same trash, from *Memory and bucket*.
+* **Operations in bulk.** Over 20 rooms, or 5 GB of files, removed by the same
+  person within an hour, the node asks for one more confirmation: the console
+  makes you type *IN BULK* and the number. The node counts, not the page, so
+  the threshold holds for a script too.
 * Archiving deletes nothing: the room stays readable and can be restored.
 
 Clicking a row opens the room on the right, with its people, invitations,
